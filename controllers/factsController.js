@@ -52,7 +52,12 @@ const addFacts = async (req, res) => {
     
     //  Validate data sent with POST request
     if (!req?.body?.funfacts) {
-        return res.status(status.Bad_Request).json({ 'message': 'funfacts array is required.' });
+        return res.status(status.Bad_Request).json({ 'message': 'State fun facts value required' });
+    }
+
+    //  Validate that funfacts data is an array
+    if (!Array.isArray(req.body.funfacts)) {
+        return res.status(status.Bad_Request).json({ 'message': 'State fun facts value must be an array'})
     }
 
     //  if no record exists in facts table for this state, create it
@@ -86,9 +91,15 @@ const addFacts = async (req, res) => {
 
 
 const updateFact = async (req, res) => {
-    //  validate parameter data
+    //  Validate state parameter
+    const state = states.find(st => st.code == req.params.state);
+    if (!state) {
+        return res.status(status.Bad_Request).json({ 'message': 'Invalid state abbreviation parameter' });
+    }
+    
+    //  validate index parameter
     if (!req?.body?.index) {
-        return res.status(status.Bad_Request).json({ 'message': 'Index parameter is required.' });
+        return res.status(status.Bad_Request).json({ 'message': 'State fun fact index value required' });
     }
 
     const index = parseInt(req.body.index);
@@ -96,18 +107,20 @@ const updateFact = async (req, res) => {
         return res.status(status.Bad_Request).json({ 'message': 'Index parameter is invalid.' });
     }
 
+    const fact = await Fact.findOne({stateCode: req.params.state}).exec();    
+    if (!fact.funfacts[index-1]) {
+        return res.status(status.Bad_Request).json({ 'message': `No Fun Fact found at that index for ${state.state}` });
+    }
+
+    //  validate funfact parameter
     if (!req?.body?.funfact) {
-        return res.status(status.Bad_Request).json({ 'message': 'funfact parameter is required.' });
+        return res.status(status.Bad_Request).json({ 'message': 'State fun fact value required' });
     }
-
-    const fact = await Fact.findOne({stateCode: req.params.state}).exec();
-    
-    if (index < 1 || index > fact.funfacts.length) {
-        return res.status(status.Bad_Request).json({ 'message': 'Index is outside of allowable range.' });
-    }
-
+ 
+    //  validate requested fact to update
     if (!fact) {
-        return res.status(status.No_Content).json({ 'message': 'Fun fact not found.' });
+        const state = states.find(st => st.code == req.params.state);
+        return res.status(status.No_Content).json({ 'message': `No Fun Facts found for ${state.state}` });
     }
 
     //  update and save
