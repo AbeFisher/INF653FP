@@ -132,25 +132,32 @@ const updateFact = async (req, res) => {
 
 
 const deleteFact = async (req, res) => {
-    //  validate parameter data
+    //  Validate state parameter
+    const state = states.find(st => st.code == req.params.state);
+    if (!state) {
+        return res.status(status.Bad_Request).json({ 'message': 'Invalid state abbreviation parameter' });
+    }
+    
+    //  validate index parameter
     if (!req?.body?.index) {
-        return res.status(status.Bad_Request).json({ 'message': 'Index parameter is required.' });
+        return res.status(status.Bad_Request).json({ 'message': 'State fun fact index value required' });
     }
 
     const index = parseInt(req.body.index);
     if (isNaN(index)) {
-        return res.status(status.Bad_Request).json({ 'message': 'Index parameter is invalid.' });
+        return res.status(status.Bad_Request).json({ 'message': 'Invalid index parameter' });
     }
 
     const fact = await Fact.findOne({stateCode: req.params.state}).exec();
-    
-    if (index < 1 || index > fact.funfacts.length) {
-        return res.status(status.Bad_Request).json({ 'message': 'Index is outside of allowable range.' });
+    //  validate requested fact to update
+    if (!fact) {
+        const state = states.find(st => st.code == req.params.state);
+        return res.status(status.Not_Found).json({ 'message': `No Fun Facts found for ${state.state}` });
     }
 
-    if (!fact) {
-        return res.status(status.No_Content).json({ 'message': 'Fun fact not found.' });
-    }
+    if (!fact?.funfacts[index-1]) {
+        return res.status(status.Bad_Request).json({ 'message': `No Fun Fact found at that index for ${state.state}` });
+    } 
 
     //  remove item from array stored in memory
     fact.funfacts.splice(index-1, 1);
