@@ -72,21 +72,37 @@ const getState = async (req, res) => {
 
 const getCapital = (req, res) => {
     const state = states.find(st => st.code == getStateCode(req));
+    if(!state) {
+        res.status(status.Not_Found);
+        return res.json({ 'message': 'Invalid state abbreviation parameter'});
+    }
     return res.json({state: state.state, capital: state.capital_city});
 }
 
 const getNickname = (req, res) => {
     const state = states.find(st => st.code == getStateCode(req));
+    if(!state) {
+        res.status(status.Not_Found);
+        return res.json({ 'message': 'Invalid state abbreviation parameter'});
+    }
     return res.json({state: state.state, capital: state.nickname});
 }
 
 const getPopulation = (req, res) => {
     const state = states.find(st => st.code == getStateCode(req));
+    if(!state) {
+        res.status(status.Not_Found);
+        return res.json({ 'message': 'Invalid state abbreviation parameter'});
+    }
     return res.json({state: state.state, capital: state.population});
 }
 
 const getAdmission = (req, res) => {
     const state = states.find(st => st.code == getStateCode(req));
+    if(!state) {
+        res.status(status.Not_Found);
+        return res.json({ 'message': 'Invalid state abbreviation parameter'});
+    }
     return res.json({state: state.state, capital: state.admission_date});
 }
 
@@ -97,6 +113,7 @@ const getStateCode = (req) => {
     }
     return code;
 }
+
 
 module.exports = {
     getStates,
