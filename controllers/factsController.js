@@ -104,24 +104,24 @@ const updateFact = async (req, res) => {
 
     const index = parseInt(req.body.index);
     if (isNaN(index)) {
-        return res.status(status.Bad_Request).json({ 'message': 'Index parameter is invalid.' });
-    }
-
-    const fact = await Fact.findOne({stateCode: req.params.state}).exec();    
-    if (!fact.funfacts[index-1]) {
-        return res.status(status.Bad_Request).json({ 'message': `No Fun Fact found at that index for ${state.state}` });
+        return res.status(status.Bad_Request).json({ 'message': 'Invalid index parameter' });
     }
 
     //  validate funfact parameter
     if (!req?.body?.funfact) {
         return res.status(status.Bad_Request).json({ 'message': 'State fun fact value required' });
     }
- 
+
+    const fact = await Fact.findOne({stateCode: req.params.state}).exec();    
     //  validate requested fact to update
     if (!fact) {
         const state = states.find(st => st.code == req.params.state);
-        return res.status(status.No_Content).json({ 'message': `No Fun Facts found for ${state.state}` });
+        return res.status(status.Not_Found).json({ 'message': `No Fun Facts found for ${state.state}` });
     }
+
+    if (!fact?.funfacts[index-1]) {
+        return res.status(status.Bad_Request).json({ 'message': `No Fun Fact found at that index for ${state.state}` });
+    } 
 
     //  update and save
     fact.funfacts[index-1] = req.body.funfact;
