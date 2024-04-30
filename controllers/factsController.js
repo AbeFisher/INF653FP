@@ -16,15 +16,20 @@ const getFacts = async (req, res) => {
 
 
 const getRandom = async (req, res) => {
-    const state = states.find(st => st.code == req.params.state);
+    let code = '';
+    if (req.params.state) {
+        code = req.params.state.toUpperCase();
+    }
+
+    const state = states.find(st => st.code == code);
 
     if (!state) {
-        return res.status(status.Bad_Request).json({ 'message': 'Invalid state parameter.' });
+        return res.status(status.Bad_Request).json({ 'message': 'Invalid state abbreviation parameter' });
     }
 
     const fact = await Fact.findOne({stateCode: state.code}).exec();
     if (!fact) {
-        return res.status(status.Not_Found).json({ 'message': `No fun facts found for ${state.state}.` });
+        return res.status(status.Not_Found).json({ 'message': `No Fun Facts found for ${state.state}.` });
     }
     else {
         if (fact.funfacts.length) {
@@ -32,7 +37,7 @@ const getRandom = async (req, res) => {
             return res.status(status.Success).json({"funfact": fact.funfacts[n]});
         }
         else {
-            return res.status(status.Not_Found).json({ 'message': `No fun facts found for ${state.state}.` });
+            return res.status(status.Not_Found).json({ 'message': `No Fun Facts found for ${state.state}.` });
         }    
     }
 }
@@ -42,7 +47,7 @@ const addFacts = async (req, res) => {
     //  Validate state parameter
     const state = states.find(st => st.code == req.params.state);
     if (!state) {
-        return res.status(status.Bad_Request).json({ 'message': 'Invalid state parameter.' });
+        return res.status(status.Bad_Request).json({ 'message': 'Invalid state abbreviation parameter' });
     }
     
     //  Validate data sent with POST request

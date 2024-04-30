@@ -49,10 +49,10 @@ const getStates = async (req, res) => {
 }
 
 const getState = async (req, res) => {
-    let result = states.find(st => st.code === req.params.state);
+    let result = states.find(st => st.code === getStateCode());
     if (!result) {
         res.status(status.Not_Found);
-        return res.json({ "message" : `State Code '${req.params.state}' not found.`});
+        return res.json({ 'message': 'Invalid state abbreviation parameter'});
     }
 
     //  add funfacts (if any) to the end of state object
@@ -71,23 +71,31 @@ const getState = async (req, res) => {
 }
 
 const getCapital = (req, res) => {
-    const state = states.find(st => st.code == req.params.state);
+    const state = states.find(st => st.code == getStateCode());
     return res.json({state: state.state, capital: state.capital_city});
 }
 
 const getNickname = (req, res) => {
-    const state = states.find(st => st.code == req.params.state);
+    const state = states.find(st => st.code == getStateCode());
     return res.json({state: state.state, capital: state.nickname});
 }
 
 const getPopulation = (req, res) => {
-    const state = states.find(st => st.code == req.params.state);
+    const state = states.find(st => st.code == getStateCode());
     return res.json({state: state.state, capital: state.population});
 }
 
 const getAdmission = (req, res) => {
-    const state = states.find(st => st.code == req.params.state);
+    const state = states.find(st => st.code == getStateCode());
     return res.json({state: state.state, capital: state.admission_date});
+}
+
+const getStateCode = () => {
+    let code = '';
+    if (req.params.state) {
+        code = req.params.state.toUpperCase();
+    }
+    return code;
 }
 
 module.exports = {
