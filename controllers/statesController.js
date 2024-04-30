@@ -37,10 +37,10 @@ const getStates = async (req, res) => {
             facts.funfacts.forEach((fact) => {
                 factArray.push(fact);
             });
+         
+            //  Append array of fun facts (not objects) to end of state object
+            results[i] = { ...results[i], 'funfacts': factArray };
         }
-
-        //  Append array of fun facts (not objects) to end of state object
-        results[i] = { ...results[i], 'funfacts': factArray };
     }
 
     //  return the state data with fun facts attached
@@ -63,9 +63,10 @@ const getState = async (req, res) => {
         facts.funfacts.forEach((fact) => {
             factArray.push(fact);
         });
+
+        result = { ...result, 'funfacts': factArray };
     }
 
-    result = { ...result, 'funfacts': factArray };
     return res.json(result);
 }
 
