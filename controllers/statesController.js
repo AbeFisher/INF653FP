@@ -30,12 +30,14 @@ const getStates = async (req, res) => {
     //  add funfacts (if any) to the end of state objects
     let facts = [];     // array of fact objects from facts table 
     for (let i = 0; i < results.length; i++) {
-        facts = await Fact.find({stateCode: results[i].code});
+        facts = await Fact.findOne({stateCode: results[i].code}).exec();
         
         let factArray = [];     // array of just the facts, not whole object
-        facts.forEach((fact) => {
-            factArray = {...factArray, fact};
-        });
+        if (facts?.funfacts) {
+            facts.funfacts.forEach((fact) => {
+                factArray.push(fact);
+            });
+        }
 
         //  Append array of fun facts (not objects) to end of state object
         results[i] = { ...results[i], 'funfacts': factArray };
@@ -55,15 +57,15 @@ const getState = async (req, res) => {
 
     //  add funfacts (if any) to the end of state object
     const facts = await Fact.findOne({stateCode: result.code}).exec();
-    let factAry = [];
+    let factArray = [];
 
     if (facts?.funfacts) {
         facts.funfacts.forEach((fact) => {
-            factAry.push(fact);
+            factArray.push(fact);
         });
     }
 
-    result = { ...result, 'funfacts': factAry };
+    result = { ...result, 'funfacts': factArray };
     return res.json(result);
 }
 
