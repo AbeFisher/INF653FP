@@ -54,14 +54,16 @@ const getState = async (req, res) => {
     }
 
     //  add funfacts (if any) to the end of state object
-    const facts = await Fact.find({stateCode: result.code});
+    const facts = await Fact.findOne({stateCode: result.code}).exec();
+    let factAry = [];
 
-    let factArray = [];     // array of just the facts, not whole object
-    facts.forEach((fact) => {
-        factArray = {...factArray, fact};
-    });
+    if (facts?.funfacts) {
+        facts.funfacts.forEach((fact) => {
+            factAry.push(fact);
+        });
+    }
 
-    result = { ...result, 'funfacts': factArray };
+    result = { ...result, 'funfacts': factAry };
     return res.json(result);
 }
 
