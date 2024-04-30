@@ -24,7 +24,7 @@ const getRandom = async (req, res) => {
 
     const fact = await Fact.findOne({stateCode: state.code}).exec();
     if (!fact) {
-        return res.status(status.Bad_Request).json({ 'message': `No fun facts found for ${state.state}.` });
+        return res.status(status.Not_Found).json({ 'message': `No fun facts found for ${state.state}.` });
     }
     else {
         if (fact.funfacts.length) {
@@ -32,7 +32,7 @@ const getRandom = async (req, res) => {
             return res.status(status.Success).json({"funfact": fact.funfacts[n]});
         }
         else {
-            return res.status(status.Bad_Request).json({ 'message': `No fun facts found for ${state.state}.` });
+            return res.status(status.Not_Found).json({ 'message': `No fun facts found for ${state.state}.` });
         }    
     }
 }
