@@ -49,7 +49,7 @@ const getStates = async (req, res) => {
 }
 
 const getState = async (req, res) => {
-    let result = states.find(st => st.code === getStateCode());
+    let result = states.find(st => st.code === getStateCode(req));
     if (!result) {
         res.status(status.Not_Found);
         return res.json({ 'message': 'Invalid state abbreviation parameter'});
@@ -71,26 +71,26 @@ const getState = async (req, res) => {
 }
 
 const getCapital = (req, res) => {
-    const state = states.find(st => st.code == getStateCode());
+    const state = states.find(st => st.code == getStateCode(req));
     return res.json({state: state.state, capital: state.capital_city});
 }
 
 const getNickname = (req, res) => {
-    const state = states.find(st => st.code == getStateCode());
+    const state = states.find(st => st.code == getStateCode(req));
     return res.json({state: state.state, capital: state.nickname});
 }
 
 const getPopulation = (req, res) => {
-    const state = states.find(st => st.code == getStateCode());
+    const state = states.find(st => st.code == getStateCode(req));
     return res.json({state: state.state, capital: state.population});
 }
 
 const getAdmission = (req, res) => {
-    const state = states.find(st => st.code == getStateCode());
+    const state = states.find(st => st.code == getStateCode(req));
     return res.json({state: state.state, capital: state.admission_date});
 }
 
-const getStateCode = () => {
+const getStateCode = (req) => {
     let code = '';
     if (req.params.state) {
         code = req.params.state.toUpperCase();
