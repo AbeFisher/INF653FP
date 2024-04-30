@@ -85,7 +85,7 @@ const getNickname = (req, res) => {
         res.status(status.Not_Found);
         return res.json({ 'message': 'Invalid state abbreviation parameter'});
     }
-    return res.json({state: state.state, capital: state.nickname});
+    return res.json({state: state.state, nickname: state.nickname});
 }
 
 const getPopulation = (req, res) => {
@@ -94,7 +94,7 @@ const getPopulation = (req, res) => {
         res.status(status.Not_Found);
         return res.json({ 'message': 'Invalid state abbreviation parameter'});
     }
-    return res.json({state: state.state, capital: state.population});
+    return res.json({state: state.state, population: state.population.toLocaleString()});
 }
 
 const getAdmission = (req, res) => {
@@ -103,7 +103,7 @@ const getAdmission = (req, res) => {
         res.status(status.Not_Found);
         return res.json({ 'message': 'Invalid state abbreviation parameter'});
     }
-    return res.json({state: state.state, capital: state.admission_date});
+    return res.json({state: state.state, admitted: state.admission_date});
 }
 
 const getStateCode = (req) => {
